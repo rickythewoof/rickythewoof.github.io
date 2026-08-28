@@ -41,3 +41,6 @@ Disallow: /
 
 User-agent: Omgili
 Disallow: /
+
+
+Sitemap: https://rickythewoof.it/sitemap.xml
