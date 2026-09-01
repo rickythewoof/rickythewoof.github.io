@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+
   <script defer src="https://stats.rickythewoof.it/recorder.js" data-website-id="b9bee13c-4d7f-4b69-9e78-8707f528c79d"></script>
   <script defer src="https://stats.rickythewoof.it/script.js" data-website-id="b9bee13c-4d7f-4b69-9e78-8707f528c79d"></script>
   <meta charset="utf-8">
@@ -300,6 +308,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     const resourceScript = '<script>window.__resources = ' +
       JSON.stringify(resourceMap).replace(/<\//g, '<\\/') +
       ';</' + 'script>';
+
+    // The template carries its own <head>, and replaceWith() below swaps out the
+    // whole document — including the icon/manifest links declared in this file's
+    // head. Carry them over so the favicon survives the swap.
+    const headLinks = Array.from(
+      document.querySelectorAll('link[rel~="icon"], link[rel="apple-touch-icon"], link[rel="manifest"], meta[name="theme-color"]')
+    ).map(el => el.outerHTML).join('');
     // Inject after <head> so the DOCTYPE stays first; prepending the script
     // would push the parser into quirks mode. DOMParser always emits a <head>
     // (synthesizing one if the source HTML omitted it) but may carry
@@ -308,7 +323,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const headOpen = template.match(/<head[^>]*>/i);
     if (headOpen) {
       const i = headOpen.index + headOpen[0].length;
-      template = template.slice(0, i) + resourceScript + template.slice(i);
+      template = template.slice(0, i) + resourceScript + headLinks + template.slice(i);
     }
 
     // Parse the template and swap the root element. Scripts inserted via
